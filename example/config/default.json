@@ -1,0 +1,27 @@
+{
+  "host": "localhost",
+  "port": 3030,
+  "public": "../public/",
+  "paginate": {
+    "default": 10,
+    "max": 50
+  },
+  "authentication": {
+    "entity": "user",
+    "entityId": "_id",
+    "service": "users",
+    "secret": "n9nsPISkr91nZgteTQ4tzqp9QTU=",
+    "authStrategies": [
+      "auth0jwks"
+    ],
+    "auth0jwks": {
+      "entityAuth0": "auth0Id",
+      "domain": "feathers-auth0jwks.us.auth0.com"
+    },
+    "jwtOptions": {
+      "audience": [
+        "https://feathers-auth0jwks.com"
+      ]
+    }
+  }
+}

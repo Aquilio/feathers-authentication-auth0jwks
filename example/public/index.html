@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Feathers Auth0JWKS Example</title>
+</head>
+<style>
+  .hidden {
+    display: none;
+  }
+
+  label {
+    margin-bottom: 10px;
+    display: block;
+  }
+</style>
+
+<body>
+  <main id="main" class="container">
+    <h1>Welcome to Feathers Authentication Auth0JWKS</h1>
+    <p>Use the email <code>feathers-auth0jwks@aquil.io</code> and password <code>ktDB2XgoWp6ytpU7HTXH</code> when
+      prompted.</p>
+    <button id="btn-login" disabled="true">Log in</button>
+    <button id="btn-logout" disabled="true">Log out</button>
+    <div class="hidden" id="gated-content">
+      <p>
+        You're seeing this content because you're currently
+        <strong>logged in</strong>.
+      </p>
+      <label>
+        Access token:
+        <pre id="ipt-access-token"></pre>
+      </label>
+      <label>
+        Auth0 User profile:
+        <pre id="ipt-user-profile"></pre>
+      </label>
+      <label>
+        Feathers Auth result:
+        <pre id="auth-call-result"></pre>
+      </label>
+    </div>
+  </main>
+
+  <script src="https://cdn.auth0.com/js/auth0-spa-js/1.9/auth0-spa-js.production.js"></script>
+  <script type="text/javascript">
+    /*
+      Most of this is from the Auth0 Vanilla Quick Start
+      https://auth0.com/docs/quickstart/spa/vanillajs
+    */
+    let auth0 = null;
+
+    // Configure Auth0 client
+    const configureClient = async () => {
+      auth0 = await createAuth0Client({
+        domain: 'feathers-auth0jwks.us.auth0.com',
+        client_id: 'oZEoM6MPBR5r0iY6BC6kiBvjjs1NXrmZ',
+        audience: 'https://feathers-auth0jwks.com'
+      });
+    };
+
+    const updateUI = async () => {
+      const isAuthenticated = await auth0.isAuthenticated();
+
+      document.getElementById("btn-logout").disabled = !isAuthenticated;
+      document.getElementById("btn-login").disabled = isAuthenticated;
+
+      if (isAuthenticated) {
+        document.getElementById("gated-content").classList.remove("hidden");
+
+        document.getElementById(
+          "ipt-access-token"
+        ).innerHTML = await auth0.getTokenSilently();
+
+        // Display Auth0 Profile
+        document.getElementById("ipt-user-profile").textContent = JSON.stringify(
+          await auth0.getUser(), undefined, 2
+        );
+
+        try {
+          // Get the access token from the Auth0 client
+          const accessToken = await auth0.getTokenSilently();
+
+          // Make an authentication call to the API, sending the token and a
+          // 'auth0jwks' strategy
+          // You will also want to add this token to each API request as the 
+          // Authorization Header 
+          const response = await fetch("/authentication", {
+            method: 'post',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              accessToken,
+              strategy: "auth0jwks"
+            })
+          });
+
+          // Fetch the JSON result
+          const responseData = await response.json();
+
+          // Display the result in the output element
+          const responseElement = document.getElementById("auth-call-result");
+
+          responseElement.innerText = JSON.stringify(responseData, {}, 2);
+
+        } catch (e) {
+          // Display errors in the console
+          console.error(e);
+        }
+
+      } else {
+        document.getElementById("gated-content").classList.add("hidden");
+      }
+    };
+
+    window.onload = async () => {
+      await configureClient();
+      updateUI();
+
+      // Check for the code and state parameters
+      const query = window.location.search;
+      if (query.includes("code=") && query.includes("state=")) {
+
+        // Process the login state
+        await auth0.handleRedirectCallback();
+
+        updateUI();
+
+        // Use replaceState to redirect the user away and remove the 
+        // querystring parameters
+        window.history.replaceState({}, document.title, "/");
+      }
+    };
+
+    document.getElementById("btn-login").addEventListener('click', async () => {
+      await auth0.loginWithRedirect({
+        redirect_uri: window.location.origin
+      });
+    });
+
+    document.getElementById("btn-logout").addEventListener('click', async () => {
+      await auth0.logout({
+        returnTo: window.location.origin
+      });
+    });
+  </script>
+</body>
+
+</html>

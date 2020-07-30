@@ -1,0 +1,112 @@
+{
+  "name": "feathers-authentication-auth0jwks",
+  "version": "0.0.0",
+  "homepage": "https://github.com/Aquilio/feathers-authentication-auth0jwks#readme",
+  "bugs": {
+    "url": "https://github.com/Aquilio/feathers-authentication-auth0jwks/issues"
+  },
+  "description": "Auth0 JWKS authentication strategy for feathers",
+  "main": "lib/",
+  "scripts": {
+    "prepare": "npm run compile",
+    "publish": "git push origin --tags && npm run changelog && git push origin",
+    "changelog": "github_changelog_generator && git add CHANGELOG.md && git commit -am \"Updating changelog\"",
+    "release:patch": "npm version patch && npm publish",
+    "release:minor": "npm version minor && npm publish",
+    "release:major": "npm version major && npm publish",
+    "compile": "rimraf lib/ && babel -d lib/ src/",
+    "watch": "babel --watch -d lib/ src/",
+    "lint": "semistandard --fix src/**/*.js test/**/*.js --config",
+    "mocha": "nyc mocha",
+    "coverage": "nyc report --reporter=text-lcov",
+    "test": "npm run compile && npm run lint && npm run mocha",
+    "example": "NODE_CONFIG_DIR=./example/config babel-node example/app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Aquilio/feathers-authentication-auth0jwks.git"
+  },
+  "engines": {
+    "node": ">= 8"
+  },
+  "author": {
+    "name": "Aquil.io",
+    "email": "contact@aquil.io",
+    "url": "https://aquil.io"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "license": "MIT",
+  "keywords": [
+    "feathers",
+    "feathers-authentication",
+    "feathersjs",
+    "auth0",
+    "jwks"
+  ],
+  "dependencies": {
+    "@feathersjs/authentication": "^4.5.7",
+    "@feathersjs/errors": "^4.5.7",
+    "jwks-rsa": "^1.8.1",
+    "jsonwebtoken": "^8.5.1",
+    "debug": "^4.1.1"
+  },
+  "devDependencies": {
+    "@auth0/auth0-spa-js": "^1.11.0",
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.10.5",
+    "@babel/node": "^7.10.5",
+    "@babel/preset-env": "^7.10.4",
+    "@babel/register": "^7.10.5",
+    "@feathersjs/configuration": "^4.5.7",
+    "@feathersjs/express": "^4.5.7",
+    "@feathersjs/feathers": "^4.5.7",
+    "babel-eslint": "^10.1.0",
+    "babel-plugin-add-module-exports": "^1.0.2",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-assign": "^6.22.0",
+    "body-parser": "^1.19.0",
+    "chai": "^4.2.0",
+    "feathers-nedb": "^5.1.0",
+    "lodash.omit": "^4.5.0",
+    "mocha": "^8.0.1",
+    "nedb": "^1.8.0",
+    "nyc": "^15.1.0",
+    "rimraf": "^3.0.2",
+    "semistandard": "^14.2.3"
+  },
+  "babel": {
+    "plugins": [
+      "transform-object-assign",
+      "transform-class-properties",
+      "add-module-exports"
+    ],
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": "8"
+          }
+        }
+      ]
+    ]
+  },
+  "nyc": {
+    "exclude": [
+      "test/**",
+      "lib/**",
+      "example/**"
+    ]
+  },
+  "semistandard": {
+    "parser": "babel-eslint",
+    "env": [
+      "mocha"
+    ],
+    "ignore": [
+      "/lib"
+    ]
+  }
+}

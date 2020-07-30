@@ -1,0 +1,11 @@
+.babelrc
+.editorconfig
+.travis.yml
+.idea/
+src/
+test/
+!lib/
+
+db.sqlite
+example/
+yarn.lock
